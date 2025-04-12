@@ -25,9 +25,9 @@ def is_holiday(date):
     return date in holidays
 
 # Streamlit 앱 설정
-st.set_page_config(page_title="육아제도 신청 가이드", layout="centered")
+st.set_page_config(page_title="육아제도 신청 가이드", layout="wide")
 
-# 제안서 스타일로 커스탬했습니다
+# 제안서 스타일로 커스텀했습니다
 custom_style = """
 <link href="https://fonts.googleapis.com/css2?family=42dot+Sans&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Gasoek+One&display=swap" rel="stylesheet">
@@ -41,10 +41,10 @@ custom_style = """
     .main-header {
         color: #3D83EB;
         font-family: 'Do Hyeon', sans-serif;
-        font-size: 50px;
+        font-size: 40px;
         font-weight: bold;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
     }
     .sub-header {
         color: #3D83EB;
@@ -53,17 +53,30 @@ custom_style = """
         margin-top: 40px;
         margin-bottom: 10px;
     }
-    .success-box {
-        background-color: #3D83EB;
-        border-left: 6px solid #3D83EB;
-        padding: 10px;
-        margin-top: 0px;
+    .success {
+        font-size: 16px;
+        background-color: #FFFFFF !important; 
+        border-color: #3D83EB !important;     
+        color: black !important;     
+        border-radius: 8px;
+        padding: 15px;
         font-weight: bold;
-        color: #FFFFFF;
-        margin-bottom: 10px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        margin-bottom: 10px; 
+    }
+    .warning-box {
+        background-color: #3D83EB !important; 
+        border-color: #FFFFFF !important;     
+        color: white !important;     
+        border-radius: 8px;
+        padding: 15px;
+        font-weight: bold;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        margin-bottom: 10px;    
     }
 </style>
 """
+
 st.markdown(custom_style, unsafe_allow_html=True)
 
 # 메인 헤더
@@ -107,14 +120,13 @@ if policy_type == "육아휴직 (6+6제도 포함)" and child_age_months <= 18:
 st.markdown('<div class="sub-header">2. 육아제도 신청 가이드</div>', unsafe_allow_html=True)
 
 if public_servant:
-    st.warning("※ 공무원은 '고용보험 적용 대상'이 아니므로 일부 육아휴직 급여 제도(6+6 포함)는 적용되지 않을 수 있습니다.")
-
+    st.markdown('<div class="warning-box">※ 공무원은 \'고용보험 적용 대상\'이 아니므로, 일부 육아휴직 급여 제도(6+6 포함)는 적용되지 않을 수 있습니다.</div>', unsafe_allow_html=True)
 result = ""
 
 if policy_type == "육아휴직 (6+6제도 포함)":
     deadline = child_birth_date + timedelta(days=365 * 8)
     result += f"- 육아휴직 신청 마감일: {deadline} (자녀 만 8세 이전)\n"
-    result += f"- 현재 자녀 나이: 약 {child_age_months}개월\n\n"
+    result += f"- 현재 자녀 나이: 약 {child_age_months}개월\n\n<br>"
 
     if child_age_months <= 18:
         if joint_leave:
@@ -148,11 +160,12 @@ elif policy_type == "난임치료휴가":
     result += "- 난임치료휴가: 연 6일 (최초 2일 유급), 남녀 근로자 모두 가능\n"
 
 if result:
-    result += ("\n\n**[신청 가이드]**\n"
+    result += ("<br><br>"
+               "\n\n**[신청 가이드]**\n"
                "- 고용노동부 정책자료 사이트 방문 또는 고용센터 문의\n"
                "- [고용노동부 정책 안내 바로가기](https://www.moel.go.kr/policy/policydata/list.do)")
 
-st.success(result)
+st.markdown(f'<div class="success">{result}</div>', unsafe_allow_html=True)
 
 # 급여 계산기 조건부 표시
 if policy_type in ["출산전후휴가", "배우자출산휴가", "육아휴직 (6+6제도 포함)"]:
@@ -216,16 +229,74 @@ st.markdown("""
 if notify:
     st.info("추후 이메일/캘린더 알림 기능과 연동 예정입니다.")
 
-# 요약 안내
-st.markdown("""
----
-### 🍼 임신과 육아를 준비하고 계신가요?
-**주요 지원제도 요약:**
+# 사이드바 스타일
+sidebar_style = """
+<style>
+[data-testid="stSidebar"] {
+    width: 50px; /* 너비 */
+    font-family: 'Arial', sans-serif; /* 폰트 스타일 */
+    padding-top: 20px; /* 상단 여백 */
+}
+[data-testid="stSidebar"] h4 {
+    padding-top: 20px; /* 상단 여백 */
+    font-size: 20px; /* 제목 폰트 크기 */
+    text-align: center;
+    color: #3D83EB; /* 제목 색상 */ 
+}
+[data-testid="stSidebar"] a {
+    display: block;
+    justify-content: center;
+    text-align: center;
+    background-color: #FFFFFF; /* 버튼 배경색 */
+    color: black; /* 버튼 텍스트 색상 */
+    text-align: center;
+    width: 70%; /* 버튼 너비 */
+    height: 50px; /* 버튼 높이 */
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 10px; /* 버튼 모서리 둥글게 */
+    text-decoration: none; /* 링크 밑줄 제거 */
+}
+[data-testid="stSidebar"] a:hover {
+    background-color: #1E60A6; /* 버튼 호버 효과 */
+}
+</style>
+"""
 
+# CSS 적용
+st.markdown(sidebar_style, unsafe_allow_html=True)
+
+# 사이드바 내용 추가
+with st.sidebar:
+    st.title("🍼 임신 준비중이신가요?")
+    st.markdown('<a href="#summary">국민행복카드</a>', unsafe_allow_html=True)
+    st.markdown('<a href="#happiness-card">고위험 임산부 의료비</a>', unsafe_allow_html=True)
+    st.markdown('<a href="#high-risk-support">청소년 산모 지원</a>', unsafe_allow_html=True)
+    st.markdown('<a href="#teen-mother-support">엽산제/철분제</a>', unsafe_allow_html=True)
+    st.markdown('<a href="#supplements">첫만남이용권</a>', unsafe_allow_html=True)
+
+# 주요 섹션 표시
+st.markdown("<div id='summary' class='section'><h4><br>지원제도 요약 안내</h4></div>", unsafe_allow_html=True)
+st.markdown("""
 - **국민행복카드**: 태아 1인당 100만 원, 출산 후 2년까지 사용 가능
 - **고위험 임산부 의료비**: 최대 300만 원 지원
-- **청소년 산모 지원**: 120만 원 (만 19세 이하 대상)
+- **청소년 산모 지원**: 만 19세 이하 대상 최대 지원금액은 약 120만 원.
 - **엽산제/철분제**: 보건소에서 무료 제공
-- **첫만남이용권**: 첫째 200만 원, 둘째 이상 300만 원 (출생 1년 내 사용)
-- **신청처**: 정부24 또는 주민센터 방문
+- **첫만남이용권**: 첫째 200만 원, 둘째 이상 300만 원 (출생 후 최대 1년 내 사용 가능)
 """)
+
+# 각 섹션 내용 추가
+st.markdown("<br><div id='happiness-card' class='section'><h5>🍀 국민행복카드</h5></div>", unsafe_allow_html=True)
+st.markdown("- 태아당 약 100만 원. 출산 후 최대 2년까지 사용 가능\n- 신청처: 정부24 또는 주민센터 방문")
+
+st.markdown("<br><div id='high-risk-support' class='section'><h5>🏥 고위험 임산부 의료비</h5></div>", unsafe_allow_html=True)
+st.markdown("- 최대 지원금액은 약 300만 원\n- 신청처: 정부24 또는 주민센터 방문")
+
+st.markdown("<br><div id='teen-mother-support' class='section'><h5>🤰 청소년 산모 지원</h5></div>", unsafe_allow_html=True)
+st.markdown("- 만 19세 이하 대상 최대 지원금액은 약 120만 원\n- 신청처: 정부24 또는 주민센터 방문")
+
+st.markdown("<br><div id='supplements' class='section'><h5>💊 엽산제/철분제</h5></div>", unsafe_allow_html=True)
+st.markdown("- 보건소에서 무료 제공\n- 신청처: 정부24 또는 주민센터 방문")
+
+st.markdown("<br><div id='first-meeting' class='section'><h5>💳 첫만남이용권</h5></div>", unsafe_allow_html=True)
+st.markdown("- 첫째는 약 200만 원, 둘째 이상은 약 300만 원 (출생 후 최대 1년 내 사용 가능)\n- 신청처: 정부24 또는 주민센터 방문")
